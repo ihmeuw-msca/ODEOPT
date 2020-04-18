@@ -3,25 +3,26 @@
     SEIRD Model
     ~~~~~~~~~~~
 """
+import numpy as np
 from .odesys import ODESys
 
 
 class SEIRD(ODESys):
     """SEIRD Model.
     """
-    def __init__(self):
+    def __init__(self, *args):
         """Constructor function for SEIR.
         """
         # create system
         def system(t, y, p):
-            aI = p['alphaI'](t)
-            aS = p['alphaS'](t)
-            aN = p['alphaN'](t)
-            b = p['beta'](t)
-            n = p['N'](t)
-            r = p['gamma'](t)
-            s = p['sigma'](t)
-            x = p['chi'](t)
+            aI = p[0]
+            aS = p[1]
+            aN = p[2]
+            b = p[3]
+            n = p[4]
+            s = p[5]
+            r = p[6]
+            x = p[7]
 
             ds = -b*(y[0]**aS)*(y[2]**aI)/(n**aN)
             de = b*(y[0]**aS)*(y[2]**aI)/(n**aN) - s*y[1]
@@ -29,21 +30,16 @@ class SEIRD(ODESys):
             dr = r*y[2]
             dd = x*y[2]
 
-            return [ds, de, di, dr, dd]
+            return np.array([ds, de, di, dr, dd])
 
         # create parameters
-        params = {
-            'alphaI': lambda x: 1.0,
-            'alphaS': lambda x: 1.0,
-            'alphaN': lambda x: 1.0,
-            'beta': lambda x: 1.0,
-            'N': lambda x: 1.0,
-            'gamma': lambda x: 0.5,
-            'sigma': lambda x: 0.8,
-            'chi': lambda x: 0.01,
-        }
+        params = [
+            'alphaI', 'alphaS', 'alphaN',
+            'beta', 'N', 'sigma',
+            'gamma', 'chi',
+        ]
 
         # create component names
-        component_names = ['S', 'E', 'I', 'R', 'D']
+        components = ['S', 'E', 'I', 'R', 'D']
 
-        super().__init__(system, params, component_names)
+        super().__init__(system, params, components, *args)
