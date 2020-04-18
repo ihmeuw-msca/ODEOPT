@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
     SEIRD Model
-    ~~~~~~~~~~
+    ~~~~~~~~~~~
 """
-from .sysode import SysODE
+from .odesys import ODESys
 
 
-class SEIRD(SysODE):
+class SEIRD(ODESys):
     """SEIRD Model.
     """
     def __init__(self):

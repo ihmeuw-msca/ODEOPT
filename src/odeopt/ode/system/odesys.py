@@ -9,7 +9,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 
-class SysODE:
+class ODESys:
     """System of ODE.
     """
     def __init__(self, system, params, component_names):
