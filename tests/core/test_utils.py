@@ -28,3 +28,25 @@ def test_change_names(old_names, name_dict):
         assert result == 'new'
     if isinstance(result, list):
         assert all([s == 'new' for s in result])
+
+
+@pytest.mark.parametrize(('prior', 'result'),
+                         [(np.array([0.0, 1.0]), True),
+                          (np.array([[0.0, 1.0]]*2), True),
+                          (np.array([0.0, -1.0]), False),
+                          (np.array([[0.0, -1.0]]*2), False),
+                          (None, True),
+                          ('gaussian_prior', False)])
+def test_is_gaussian_prior(prior, result):
+    assert utils.is_gaussian_prior(prior) == result
+
+
+@pytest.mark.parametrize(('prior', 'result'),
+                         [(np.array([0.0, 1.0]), True),
+                          (np.array([[0.0, 1.0]]*2), True),
+                          (np.array([0.0, -1.0]), False),
+                          (np.array([[0.0, -1.0]]*2), False),
+                          (None, True),
+                          ('uniform_prior', False)])
+def test_is_uniform_prior(prior, result):
+    assert utils.is_uniform_prior(prior) == result
