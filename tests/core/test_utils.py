@@ -50,3 +50,25 @@ def test_is_gaussian_prior(prior, result):
                           ('uniform_prior', False)])
 def test_is_uniform_prior(prior, result):
     assert utils.is_uniform_prior(prior) == result
+
+
+@pytest.mark.parametrize('prior', [None,
+                                   [0.0, np.inf],
+                                   [[0.0, np.inf]]*3])
+@pytest.mark.parametrize('size', [3])
+def test_input_gaussian_prior(prior, size):
+    my_prior = utils.input_gaussian_prior(prior, size)
+    assert my_prior.shape[0] == size
+    assert np.allclose(my_prior[:, 0], 0.0)
+    assert np.all(np.isposinf(my_prior[:, 1]))
+
+
+@pytest.mark.parametrize('prior', [None,
+                                   [-np.inf, np.inf],
+                                   [[-np.inf, np.inf]]*3])
+@pytest.mark.parametrize('size', [3])
+def test_input_uniform_prior(prior, size):
+    my_prior = utils.input_uniform_prior(prior, size)
+    assert my_prior.shape[0] == size
+    assert np.all(np.isneginf(my_prior[:, 0]))
+    assert np.all(np.isposinf(my_prior[:, 1]))

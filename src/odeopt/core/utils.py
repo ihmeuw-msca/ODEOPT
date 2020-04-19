@@ -129,7 +129,7 @@ def is_uniform_prior(prior):
 def input_gaussian_prior(prior, size):
     """Process the input Gaussian prior
     Args:
-        prior (numpy.ndarray):
+        prior (numpy.ndarray | list):
             Either one or two dimensional array, with first group refer to mean
             and second group refer to standard deviation.
         size (int, optional):
@@ -144,7 +144,9 @@ def input_gaussian_prior(prior, size):
     assert is_gaussian_prior(prior)
     if prior is None:
         return np.array([[0.0, np.inf]]*size)
-    elif prior.ndim == 1:
+    else:
+        prior = np.array(prior)
+    if prior.ndim == 1:
         return np.repeat(prior[None, :], size, axis=0)
     else:
         assert prior.shape[0] == size
@@ -153,7 +155,7 @@ def input_gaussian_prior(prior, size):
 def input_uniform_prior(prior, size):
     """Process the input Gaussian prior
     Args:
-        prior (numpy.ndarray):
+        prior (numpy.ndarray | list):
             Either one or two dimensional array, with first group refer to mean
             and second group refer to standard deviation.
         size (int, optional):
@@ -168,7 +170,9 @@ def input_uniform_prior(prior, size):
     assert is_uniform_prior(prior)
     if prior is None:
         return np.array([[-np.inf, np.inf]]*size)
-    elif prior.ndim == 1:
+    else:
+        prior = np.array(prior)
+    if prior.ndim == 1:
         return np.repeat(prior[None, :], size, axis=0)
     else:
         assert prior.shape[0] == size
