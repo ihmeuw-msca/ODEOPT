@@ -5,11 +5,10 @@
 """
 import numpy as np
 from scipy.optimize import minimize
-from .param_model import ParamModel
 from .init_model import InitModel
+from .param_model import ParamModel
 from odeopt.ode import ODESys
 from odeopt.core import ODEData
-
 
 
 class ODEModel:
@@ -122,7 +121,7 @@ class ODEModel:
                 Gradient w.r.t. the model parameters.
         """
         finfo = np.finfo(float)
-        step  = finfo.tiny / finfo.eps
+        step = finfo.tiny / finfo.eps
         x_c = x + 0j
         grad = np.zeros(x.size)
         for i in range(x.size):
@@ -131,7 +130,6 @@ class ODEModel:
             x_c[i] -= step*1j
 
         return grad
-
 
     def fit_model(self, x0, options=None):
         """Fit the model, including initial condition and parameter.

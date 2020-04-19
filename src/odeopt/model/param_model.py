@@ -200,7 +200,7 @@ class ParamModel:
         """
         effect = self.unpack_optvar(x, len(groups))
         params = [
-            model.effect2param(effect[i], data, groups)
+            model.effect2param(*effect[i], data, groups)
             for i, model in enumerate(self.models)
         ]
         return {
@@ -228,8 +228,12 @@ class ParamModel:
         Returns:
             np.ndarray: bounds for all optimization variable.
         """
-        fe_bounds = [model.fe_bounds for model in self.models]
+        fe_bounds = np.vstack([model.fe_bounds for model in self.models])
         re_bounds = [model.re_bounds for model in self.models
                      if model.use_re]
-
-        return np.array(fe_bounds + re_bounds*num_groups)
+        if not re_bounds:
+            re_bounds = np.array(re_bounds).reshape(0, 2)
+        else:
+            re_bounds = np.vstack(re_bounds)
+        return np.vstack([fe_bounds,
+                          np.repeat(re_bounds, num_groups, axis=0)])
