@@ -72,3 +72,13 @@ def test_input_uniform_prior(prior, size):
     assert my_prior.shape[0] == size
     assert np.all(np.isneginf(my_prior[:, 0]))
     assert np.all(np.isposinf(my_prior[:, 1]))
+
+
+@pytest.mark.parametrize('sizes', [np.array([1, 2, 3])])
+@pytest.mark.parametrize('indices', [[np.arange(0, 1),
+                                      np.arange(1, 3),
+                                      np.arange(3, 6)]])
+def test_sizes_to_indices(sizes, indices):
+    my_indices = utils.sizes_to_indices(sizes)
+    assert all([np.allclose(my_indices[i], indices[i])
+                for i in range(len(sizes))])

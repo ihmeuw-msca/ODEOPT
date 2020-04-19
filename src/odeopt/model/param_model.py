@@ -56,7 +56,7 @@ class SingleParamModel:
         self.fe_gprior = utils.input_gaussian_prior(fe_gprior, self.num_fe)
         self.re_gprior = utils.input_gaussian_prior(re_gprior, self.num_re)
 
-    def effect2param(self, effect, data, group):
+    def _effect2param(self, effect, data, group):
         """Convert effect to parameter.
 
         Args:
@@ -78,7 +78,33 @@ class SingleParamModel:
             data.df_by_group(group)[self.col_covs].values.dot(effect)
         )
 
-        return param
+        return param[:, None]
+
+    def effect2param(self, fe, re, data, groups):
+        """Convert the effects to parameters.
+
+        Args:
+            fe (numpy.ndarray): Fixed effects.
+            re (numpy.ndarray): Random effects.
+            data (ODEData): The data object.
+            groups (list{any}): list of group definition.
+
+        Returns:
+            list{numpy.ndarray}: Parameter by group.
+        """
+        if not self.use_re:
+            assert re.size == 0
+        if re.size == 0:
+            effect = np.repeat(fe[None, :], len(groups), axis=0)
+        else:
+            effect = fe + re
+
+        assert effect.shape[0] == len(groups)
+
+        return [
+            self._effect2param(effect[i], data, group)
+            for i, group in enumerate(groups)
+        ]
 
     def objective_gprior(self, fe, re):
         """Objective from the Gaussian prior.
@@ -102,5 +128,86 @@ class SingleParamModel:
             val += 0.5*np.sum(
                 ((re - self.re_gprior[:, 0])/self.re_gprior[:, 1])**2
             )
+
+        return val
+
+
+class ParamModel:
+    """Parameter Model.
+    """
+    def __init__(self, single_param_models):
+        """Constructor of the ParamModel.
+
+        Args:
+            single_param_models (list{SingleParamModel}):
+                A list of single parameter models.
+        """
+        assert isinstance(single_param_models, list)
+        assert all([isinstance(model, SingleParamModel)
+                    for model in single_param_models])
+
+        self.models = single_param_models
+        self.params = [model.name for model in self.models]
+        self.num_params = len(self.params)
+
+        self.fe_sizes = np.array([model.num_fe for model in self.models])
+        self.re_sizes = np.array([model.num_re for model in self.models])
+
+        self.num_fe = self.fe_sizes.sum()
+        self.num_re = self.re_sizes.sum()
+
+        self.fe_idx = utils.sizes_to_indices(self.fe_sizes)
+        self.re_idx = utils.sizes_to_indices(self.re_sizes)
+
+    def unpack_optvar(self, x, num_groups):
+        """Unpack the optimization variable.
+
+        Args:
+            x (numpy.ndarray): Optimization variable.
+            num_groups (int): Number of groups.
+
+        Returns:
+            list{tupe{np.ndarray, np.ndarray}}:
+                List of unpacked fixed and random effects.
+        """
+        assert x.size == self.num_fe + num_groups*self.num_re
+
+        fe = x[:self.num_fe]
+        re = x[self.num_fe:].reshape(num_groups, self.num_re)
+
+        return [
+            (fe[self.fe_idx[i]], re[:, self.re_idx[i]])
+            for i in range(self.num_params)
+        ]
+
+    def optvar2param(self, x, data, groups):
+        """Convert optimization variable to parameter.
+
+        Args:
+            x (numpy.ndarray): Optimization variable.
+            data (ODEData): data object.
+            num_groups (int): Number of groups.
+
+        Returns:
+            dict{str, np.ndarray}: Parameters by group.
+        """
+        effect = self.unpack_optvar(x, len(groups))
+        params = [
+            model.effect2param(effect[i], data, groups)
+            for i, model in enumerate(self.models)
+        ]
+        return {
+            group: np.hstack([params[j][i] for j in range(self.num_params)])
+            for i, group in enumerate(groups)
+        }
+
+    def objective_gprior(self, x, num_groups):
+        """Objective from the Gaussian prior.
+        """
+        effect = self.unpack_optvar(x, num_groups)
+        val = np.sum([
+            model.objective_gprior(*effect[i])
+            for model in self.models
+        ])
 
         return val

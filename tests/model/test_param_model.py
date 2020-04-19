@@ -61,10 +61,20 @@ def test_single_param_model(test_model):
 
 @pytest.mark.parametrize('group', ['A', 'B', 'C'])
 @pytest.mark.parametrize('effect', [np.zeros(2)])
-def test_single_param_model_effect2_param(test_model, test_data,
-                                          effect, group):
-    my_param = test_model.effect2param(effect, test_data, group)
+def test_single_param_model_effect2_param_inner(test_model, test_data,
+                                                effect, group):
+    my_param = test_model._effect2param(effect, test_data, group)
     assert my_param.size == test_data.df_by_group(group).shape[0]
+
+@pytest.mark.parametrize('groups', [['A', 'B', 'C']])
+@pytest.mark.parametrize('fe', [np.zeros(2)])
+@pytest.mark.parametrize('re', [np.array([]).reshape(3, 0)])
+def test_single_param_model_effect2_param_outer(test_model, test_data,
+                                                fe, re, groups):
+    my_param = test_model.effect2param(fe, re, test_data, groups)
+    for i, group in enumerate(groups):
+        assert my_param[i].size == test_data.df_by_group(group).shape[0]
+
 
 
 @pytest.mark.parametrize('fe', [np.zeros(2)])
