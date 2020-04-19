@@ -207,7 +207,22 @@ class ParamModel:
         effect = self.unpack_optvar(x, num_groups)
         val = np.sum([
             model.objective_gprior(*effect[i])
-            for model in self.models
+            for i, model in enumerate(self.models)
         ])
 
         return val
+
+    def extract_optvar_bounds(self, num_groups):
+        """ Extract the bounds from each model.
+
+        Args:
+            num_groups (int): Number of groups.
+
+        Returns:
+            np.ndarray: bounds for all optimization variable.
+        """
+        fe_bounds = [model.fe_bounds for model in self.models]
+        re_bounds = [model.re_bounds for model in self.models
+                     if model.use_re]
+
+        return np.array(fe_bounds + re_bounds*num_groups)
