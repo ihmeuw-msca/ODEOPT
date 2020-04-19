@@ -13,7 +13,9 @@ from odeopt.core.data import ODEData
 class SingleParamModel:
     """Single Parameter Model.
     """
-    def __init__(self, name, col_covs, link_fun, var_link_fun,
+    def __init__(self, name, col_covs,
+                 link_fun=None,
+                 var_link_fun=None,
                  use_re=False,
                  fe_bounds=None,
                  re_bounds=None,
@@ -24,8 +26,10 @@ class SingleParamModel:
         Args:
             name (str): Name of the parameter.
             col_covs (list{str}): List of covariates.
-            link_fun(callable): Link function for the parameters.
-            var_link_fun (list{callable}): Variable link function.
+            link_fun(callable | None, optional):
+                Link function for the parameters.
+            var_link_fun (list{callable} | None):
+                Variable link function.
             use_re (bool, optional): If use random effects or not.
             fe_bounds (list{list{float}}): Bounds for the fixed effects.
             re_bounds (list{list{float}}): Bounds for the random effects.
@@ -37,6 +41,10 @@ class SingleParamModel:
         assert isinstance(col_covs, list)
         assert len(col_covs) != 0
         assert all([isinstance(s, str) for s in col_covs])
+        if link_fun is None:
+            link_fun = lambda x: x
+        if var_link_fun is None:
+            var_link_fun = [lambda x: x]*len(col_covs)
         assert callable(link_fun)
         assert isinstance(var_link_fun, list)
         assert all([callable(f) for f in var_link_fun])
@@ -77,7 +85,6 @@ class SingleParamModel:
         param = self.link_fun(
             data.df_by_group(group)[self.col_covs].values.dot(effect)
         )
-
         return param[:, None]
 
     def effect2param(self, fe, re, data, groups):

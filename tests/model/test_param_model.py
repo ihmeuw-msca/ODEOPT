@@ -41,8 +41,8 @@ def test_model():
     model = SingleParamModel(
         'alpha',
         ['cov1', 'cov2'],
-        np.exp,
-        [lambda x: x, lambda x: x],
+        link_fun=np.exp,
+        var_link_fun=[lambda x: x, lambda x: x],
         use_re = False,
     )
     return model
