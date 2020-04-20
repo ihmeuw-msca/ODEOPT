@@ -52,8 +52,8 @@ class ODEModel:
         ])
 
         self.result = None
-        self.result_init = None
-        self.result_param = None
+        self.result_inits = None
+        self.result_params = None
 
     def objective_by_group(self, inits, params, group):
         """Objective for a specific group.

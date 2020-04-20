@@ -43,3 +43,33 @@ class SEIRD(ODESys):
         components = ['S', 'E', 'I', 'R', 'D']
 
         super().__init__(system, params, components, *args)
+
+
+class SimpleSEIRD(ODESys):
+    """SEIRD Model.
+    """
+    def __init__(self, *args):
+        """Constructor function for SimpleSEIR.
+        """
+        # create system
+        def system(t, y, p):
+            b = p[0]
+            s = p[1]
+            r = p[2]
+            x = p[3]
+
+            ds = -b*y[0]*y[2]
+            de = b*y[0]*y[2] - s*y[1]
+            di = s*y[1] - (r + x)*y[2]
+            dr = r*y[2]
+            dd = x*y[2]
+
+            return np.array([ds, de, di, dr, dd])
+
+        # create parameters
+        params = [ 'beta', 'sigma', 'gamma', 'chi']
+
+        # create component names
+        components = ['S', 'E', 'I', 'R', 'D']
+
+        super().__init__(system, params, components, *args)
