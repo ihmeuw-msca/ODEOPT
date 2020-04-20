@@ -3,5 +3,3 @@
     ODE OPT
     ~~~~~~~
 """
-from .core.sysode import *
-from .core.seird import *
