@@ -69,26 +69,26 @@ class ODESys:
             self.solver_dt = solver_dt
             self.solver.dt = self.solver_dt
 
-    def simulate(self, t, t_params, params, init_cond):
+    def simulate(self, t, init_cond, t_params, params):
         """Solve the ODE by given time and initial condition.
 
         Args:
             t (numpy.ndarray):
                 Time points where we evaluate the system of ODE. Assume to be
                 sorted.
+            init_cond (numpy.ndarray | dict{str, numpy.ndarray}):
+                Initial condition.
             t_params (numpy.ndarray):
                 Time stamp for the parameters. Assume to be sorted.
             params (numpy.ndarray | dict{str, numpy.ndarray}):
                 Parameters for each time point in `t_params`.
-            init_cond (numpy.ndarray | dict{str, numpy.ndarray}):
-                Initial condition.
 
         Returns:
             soln (numpy.ndarray):
                 Solutions for each time point in `t`.
         """
-        assert len(params) == self.num_params
         assert len(init_cond) == self.num_components
+        assert len(params) == self.num_params
 
         if isinstance(params, dict):
             params = np.vstack([
@@ -104,4 +104,4 @@ class ODESys:
         t = np.sort(np.unique(np.array(t)))
         assert t.size >= 2
 
-        return self.solver.solve(t, t_params, params, init_cond)
+        return self.solver.solve(t, init_cond, t_params, params)

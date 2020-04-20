@@ -55,33 +55,80 @@ class ODEModel:
         self.result_init = None
         self.result_param = None
 
-    def objective_by_group(self, params, inits, group):
+    def objective_by_group(self, inits, params, group):
         """Objective for a specific group.
 
         Args:
-            params (dict{str, np.ndarray}): Parameters for each group.
             inits (dict{str, np.ndarray}): Initial condition for each group.
+            params (dict{str, np.ndarray}): Parameters for each group.
             group (any): group definition.
 
         Returns:
             float: objective value.
         """
-        df_group = self.data.df_by_group(group)
-        prediction = self.ode_sys.simulate(
-            df_group[self.data.col_t],
-            df_group[self.data.col_t],
-            params[group],
-            inits[group]
+        prediction = self.predict(
+            self.data.df_by_group(group)[self.data.col_t],
+            inits=inits,
+            params=params,
+            group=group
         )
 
         val = 0.0
         for component in self.data.col_components:
-            observation = df_group[component]
+            observation = self.data.df_by_group(group)[component]
             residual = observation - prediction[
                 self.ode_sys.components_id[component]]
             val = 0.5*np.sum(residual**2)
 
         return val
+
+    def predict(self, t, inits=None, params=None, group=None):
+        """Prediction from the simulation of ODE System.
+
+        Args:
+            t (np.ndarray): time points where want to predict.
+            inits (dict | None, optional):
+                Dictionary of initial condition. When it is None, use the final
+                result initial condition.
+            params (dict | None, optional):
+                Dictionary of the parameters. When it is None, use the final
+                result parameters.
+            group (any | None, optional):
+                Which group want to be predicted. If None, returns prediction
+                for all groups as a dictionary.
+
+        Returns:
+            np.ndarray | dict{any, np.ndarray}:
+                The prediction for a single group or all groups.
+        """
+        if inits is None:
+            inits = self.result_inits
+        if params is None:
+            params = self.result_params
+
+        if inits is None or params is None:
+            RuntimeError('Fit the algorithm first or pass in initial condition'
+                         'or parameters.')
+
+        if group is not None:
+            assert group in self.data.groups
+            prediction = self.ode_sys.simulate(
+                t,
+                inits[group],
+                self.data.df_by_group(group)[self.data.col_t],
+                params[group],
+            )
+        else:
+            prediction = {
+                group: self.ode_sys.simulate(
+                    t,
+                    inits[group],
+                    self.data.df_by_group(group)[self.data.col_t],
+                    params[group],
+                )
+                for group in self.data.groups
+            }
+        return prediction
 
     def objective(self, x):
         """Objective function.
@@ -103,7 +150,7 @@ class ODEModel:
                                                self.data.groups)
 
         val = np.sum([
-            self.objective_by_group(params, inits, group)
+            self.objective_by_group(inits, params, group)
             for group in self.data.groups
         ])
 
@@ -151,7 +198,7 @@ class ODEModel:
         )
 
         self.result = result
-        self.result_init = self.init_model.optvar2param(
+        self.result_inits = self.init_model.optvar2param(
             result.x[:self.init_var_size], self.data, self.data.groups)
-        self.result_param = self.param_model.optvar2param(
+        self.result_params = self.param_model.optvar2param(
             result.x[self.init_var_size:], self.data, self.data.groups)

@@ -76,7 +76,6 @@ x0 = np.array([0.0, -1.0, 0.0, -1.0, -2.0])
 ode_model.fit_model(x0)
 
 def test_ode_model_fit_model():
-    print(ode_model.result_param)
-    assert np.abs(ode_model.result_param['A'][0][0] - lam_A) < 0.1
-    assert np.abs(ode_model.result_param['B'][0][0] - lam_B) < 0.1
-    assert np.abs(ode_model.result_param['C'][0][0] - lam_C) < 0.1
+    assert np.abs(ode_model.result_params['A'][0][0] - lam_A) < 0.1
+    assert np.abs(ode_model.result_params['B'][0][0] - lam_B) < 0.1
+    assert np.abs(ode_model.result_params['C'][0][0] - lam_C) < 0.1
