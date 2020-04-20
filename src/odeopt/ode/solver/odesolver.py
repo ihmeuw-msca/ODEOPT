@@ -62,7 +62,7 @@ class ForwardEuler(ODESolver):
         params = utils.linear_interpolate(t_solve, t_params, params)
         for i in range(1, t_solve.size):
             y_solve[:, i] = y_solve[:, i - 1] + self.dt*self.system(
-                t_solve[i], y_solve[:, i - 1], params[:, i - 1])
+                t_solve[i - 1], y_solve[:, i - 1], params[:, i - 1])
 
         # linear interpolate the solutions.
         y_solve = utils.linear_interpolate(t, t_solve, y_solve)
