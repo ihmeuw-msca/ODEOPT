@@ -51,7 +51,7 @@ class ForwardEuler(ODESolver):
     def __init__(self, *args):
         super().__init__(*args)
 
-    def solve(self, t, t_params, params, init_cond):
+    def solve(self, t, init_cond, t_params, params):
         """Forward Euler solver.
         """
         t_solve = np.arange(np.min(t), np.max(t) + self.dt, self.dt)

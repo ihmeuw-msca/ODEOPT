@@ -22,12 +22,12 @@ def simple_system():
                          [(np.array([[-1.0]]),
                            np.array([1.0]),
                            lambda t: np.exp(-t))])
-def test_forward_euler(simple_system, dt, t_span, params, init_cond, true_fun):
+def test_forward_euler(simple_system, dt, t_span, init_cond, params, true_fun):
     solver = ForwardEuler(simple_system, dt)
     t = np.arange(t_span[0], t_span[1] + dt, dt)
 
     result = true_fun(t)
-    my_result = solver.solve(t, t, np.repeat(params, t.size, axis=1),
-                             init_cond)[0]
+    my_result = solver.solve(t, init_cond,
+                             t, np.repeat(params, t.size, axis=1))[0]
 
     assert np.sqrt(np.mean((result - my_result)**2)) < dt*5.0
