@@ -37,9 +37,11 @@ class ODEData:
 
         assert col_group in df
         assert col_t in df
-        assert all([name in df for name in col_components])
-        assert all([name in df for name in col_covs])
-        self.df = df[[col_group, col_t] + col_components + col_covs].copy()
+        assert all([name in df for name in self.col_components])
+        assert all([name in df for name in self.col_covs])
+        self.df = df[[self.col_group, self.col_t] +
+                     self.col_components +
+                     self.col_covs].copy()
         self.df.sort_values([col_group, col_t], inplace=True)
         self.rename_cols(new_col_names)
 

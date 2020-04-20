@@ -40,10 +40,11 @@ class ODEModel:
 
         self.num_groups = len(self.data.groups)
 
-        self.num_var_init = \
+        self.init_var_size = \
             init_model.num_fe + init_model.num_re*self.num_groups
-        self.num_var_param = \
+        self.param_var_size = \
             param_model.num_fe + param_model.num_re*self.num_groups
+        self.var_size = self.init_var_size + self.param_var_size
 
         self.optvar_bounds = np.vstack([
             self.init_model.extract_optvar_bounds(self.num_groups),
@@ -91,8 +92,8 @@ class ODEModel:
         Returns:
             float: objective value.
         """
-        x_init = x[:self.num_var_init]
-        x_param = x[self.num_var_init:]
+        x_init = x[:self.init_var_size]
+        x_param = x[self.init_var_size:]
 
         inits = self.init_model.optvar2param(x_init,
                                              self.data,
@@ -151,6 +152,6 @@ class ODEModel:
 
         self.result = result
         self.result_init = self.init_model.optvar2param(
-            result.x[:self.num_var_init], self.data, self.data.groups)
+            result.x[:self.init_var_size], self.data, self.data.groups)
         self.result_param = self.param_model.optvar2param(
-            result.x[self.num_var_init:], self.data, self.data.groups)
+            result.x[self.init_var_size:], self.data, self.data.groups)

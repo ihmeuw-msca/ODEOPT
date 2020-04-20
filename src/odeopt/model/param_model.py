@@ -85,7 +85,7 @@ class SingleParamModel:
         param = self.link_fun(
             data.df_by_group(group)[self.col_covs].values.dot(effect)
         )
-        return param[:, None]
+        return param
 
     def effect2param(self, fe, re, data, groups):
         """Convert the effects to parameters.
@@ -203,10 +203,12 @@ class ParamModel:
             model.effect2param(*effect[i], data, groups)
             for i, model in enumerate(self.models)
         ]
-        return {
-            group: np.hstack([params[j][i] for j in range(self.num_params)])
+        # import pdb; pdb.set_trace()
+        result = {
+            group: np.vstack([params[j][i] for j in range(self.num_params)])
             for i, group in enumerate(groups)
         }
+        return result
 
     def objective_gprior(self, x, num_groups):
         """Objective from the Gaussian prior.

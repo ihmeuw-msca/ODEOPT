@@ -45,3 +45,24 @@ class InitModel(ParamModel):
         """
         super().__init__(single_init_models)
         self.components = self.params
+
+    def optvar2param(self, x, data, groups):
+        """Convert optimization variable to parameter.
+
+        Args:
+            x (numpy.ndarray): Optimization variable.
+            data (ODEData): data object.
+            num_groups (int): Number of groups.
+
+        Returns:
+            dict{str, np.ndarray}: Parameters by group.
+        """
+        effect = self.unpack_optvar(x, len(groups))
+        params = [
+            model.effect2param(*effect[i], data, groups)
+            for i, model in enumerate(self.models)
+        ]
+        return {
+            group: np.hstack([params[j][i] for j in range(self.num_params)])
+            for i, group in enumerate(groups)
+        }

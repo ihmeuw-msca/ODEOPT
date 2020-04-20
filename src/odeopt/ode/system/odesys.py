@@ -40,7 +40,7 @@ class ODESys:
             name: i for i, name in enumerate(self.params)
         }
         self.components_id = {
-            name: i for i, name in enumerate(self.params)
+            name: i for i, name in enumerate(self.components)
         }
 
         self.num_params = len(self.params)

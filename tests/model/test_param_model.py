@@ -111,7 +111,8 @@ def test_param_model_optvar2param(test_data, test_model, x, groups):
     model = ParamModel([test_model])
     result = model.optvar2param(x, test_data, groups)
     assert all([c in result for c in groups])
-    assert all([result[c].shape == (test_data.df_by_group(c).shape[0], 1)
+    print(result)
+    assert all([result[c].shape == (1, test_data.df_by_group(c).shape[0])
                 for c in groups])
 
 
