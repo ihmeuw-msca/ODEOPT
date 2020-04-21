@@ -78,7 +78,7 @@ class ODEModel:
             observation = self.data.df_by_group(group)[component]
             residual = observation - prediction[
                 self.ode_sys.components_id[component]]
-            val = 0.5*np.sum(residual**2)
+            val += 0.5*np.sum(residual**2)
 
         return val
 
