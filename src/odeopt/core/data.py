@@ -11,9 +11,16 @@ from odeopt.core import utils
 class ODEData:
     """Data used for fitting the ODE parameter.
     """
-    def __init__(self, df, col_group, col_t, col_components,
-                 col_covs=None,
-                 new_col_names=None):
+    def __init__(
+        self, 
+        df, 
+        col_group, 
+        col_t, 
+        col_components, 
+        components_weights=None, 
+        col_covs=None, 
+        new_col_names=None,
+    ):
         """Constructor of the ODEData.
 
         Args:
@@ -27,7 +34,18 @@ class ODEData:
         self.df_original = df.copy()
         self.col_group = col_group
         self.col_t = col_t
-        self.col_components = col_components
+        
+        assert len(col_components) > 0
+        if components_weights is None:
+            self.col_components = col_components
+            self.components_weights = [1.0 / len(col_components)] * len(col_components)
+        else:
+            assert len(col_components) == len(components_weights)
+            assert sum(components_weights) > 0.0
+            self.col_components = [col for (col, w) in zip(col_components, components_weights) if w > 0.0]
+            self.components_weights = [w for w in components_weights if w > 0.0]
+            self.components_weights = [w / sum(self.components_weights) for w in self.components_weights]
+        
         self.col_covs = [] if col_covs is None else col_covs
 
         # add intercept as default covariates

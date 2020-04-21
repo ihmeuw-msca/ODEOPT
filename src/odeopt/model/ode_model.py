@@ -74,11 +74,11 @@ class ODEModel:
         )
 
         val = 0.0
-        for component in self.data.col_components:
+        for component, weight in zip(self.data.col_components, self.data.components_weights):
             observation = self.data.df_by_group(group)[component]
             residual = observation - prediction[
                 self.ode_sys.components_id[component]]
-            val += 0.5*np.sum(residual**2)
+            val += 0.5*np.sum(residual**2) * weight
 
         return val
 

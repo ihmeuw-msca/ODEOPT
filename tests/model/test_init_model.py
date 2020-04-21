@@ -29,7 +29,7 @@ def test_data(test_df):
                    'group',
                    'time',
                    ['comp1', 'comp2'],
-                   ['cov1', 'cov2'])
+                   col_covs=['cov1', 'cov2'])
 
     return data
 
