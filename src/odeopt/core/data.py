@@ -61,18 +61,19 @@ class ODEData:
                 self.col_components_se.append(component.se_col_name)
 
         assert len(self.col_components) > 0
-
         self.components_weights = [w / sum(self.components_weights) for w in self.components_weights]
 
         self.col_covs = [] if self.data_specs.col_covs is None else self.data_specs.col_covs
         # add intercept as default covariates
-        self.df_['intercept'] = 1.0
+        self.df['intercept'] = 1.0
         if 'intercept' not in self.col_covs:
             self.col_covs.append('intercept')
-        assert all([name in df for name in self.col_covs])
-        self.df = self.df_original[[self.col_group, self.col_t] +
-                     self.col_components +
-                     self.col_covs].copy()
+        assert all([name in self.df for name in self.col_covs])
+        self.df = self.df[
+            [self.col_group, self.col_t] +
+            self.col_components +
+            self.col_covs
+        ].copy()
 
         self.df.sort_values([self.col_group, self.col_t], inplace=True)
 
