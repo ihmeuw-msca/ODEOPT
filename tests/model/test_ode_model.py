@@ -5,7 +5,7 @@
 """
 import numpy as np
 import pandas as pd
-from odeopt.core import ODEData
+from odeopt.core import ODEData, DataSpecs, Component
 from odeopt.ode import ODESys
 from odeopt.model import SingleInitModel, InitModel
 from odeopt.model import SingleParamModel, ParamModel
@@ -41,7 +41,12 @@ test_df = pd.DataFrame({
     'y1': np.hstack([y1_A, y1_B, y1_C]),
     'y2': np.hstack([y2_A, y2_B, y2_C]) + 1.0,
 })
-test_data = ODEData(test_df, 'group', 't', ['y1', 'y2'])
+
+data_specs = DataSpecs(col_t='t',
+                       col_group='group',
+                       components=[Component(col_name='y1'),
+                                   Component(col_name='y2')])
+test_data = ODEData(test_df, data_specs)
 
 
 # create the ode system

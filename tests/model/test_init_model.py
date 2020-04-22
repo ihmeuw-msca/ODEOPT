@@ -6,7 +6,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from odeopt.core.data import ODEData
+from odeopt.core.data import ODEData, DataSpecs, Component
 from odeopt.model import SingleInitModel
 from odeopt.model import InitModel
 
@@ -25,12 +25,9 @@ def test_df():
 
 @pytest.fixture
 def test_data(test_df):
-    data = ODEData(test_df,
-                   'group',
-                   'time',
-                   ['comp1', 'comp2'],
-                   col_covs=['cov1', 'cov2'])
-
+    comps = [Component(col_name='comp1'), Component(col_name='comp2')]
+    data_specs = DataSpecs(col_t='time', col_group='group', components=comps, col_covs=['cov1', 'cov2'])
+    data = ODEData(test_df, data_specs)
     return data
 
 
