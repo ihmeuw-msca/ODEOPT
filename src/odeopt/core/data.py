@@ -64,18 +64,17 @@ class ODEData:
         self.components_weights = [w / sum(self.components_weights) for w in self.components_weights]
 
         self.col_covs = [] if self.data_specs.col_covs is None else self.data_specs.col_covs
-        # add intercept as default covariates
         self.df['intercept'] = 1.0
         if 'intercept' not in self.col_covs:
             self.col_covs.append('intercept')
         assert all([name in self.df for name in self.col_covs])
+
+        self.df.sort_values([self.col_group, self.col_t], inplace=True)
         self.df = self.df[
             [self.col_group, self.col_t] +
             self.col_components +
             self.col_covs
-        ].copy()
-
-        self.df.sort_values([self.col_group, self.col_t], inplace=True)
+        ]
 
     def rename_cols(self, new_col_names):
         """Rename the columns in the data set.

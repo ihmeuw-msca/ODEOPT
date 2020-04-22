@@ -51,7 +51,6 @@ class TestODEData:
         assert odedate.col_components == ['comp1']
         assert odedate.components_weights == [1.0]
 
-<<<<<<< HEAD
         data_specs.components[0].weight = 0.5
         data_specs.components[1].weight = 1.5
         odedate = ODEData(df, data_specs)
@@ -87,38 +86,3 @@ class TestODEData:
         odedata = ODEData(df, data_specs)
         df_group = odedata.df_by_group(group)
         assert all(df_group[odedata.col_group] == group)
-=======
-        # odedate = self.generate_odedata_instance(df, components_weights=[0.5, 1.5])
-        # assert odedate.col_components == ['comp1', 'comp2']
-        # assert odedate.components_weights == [0.25, 0.75]
-
-    # @pytest.mark.parametrize('new_col_names',
-    #                         [{'comp1': 'new_comp1', 'comp2': 'new_comp2'},
-    #                         {'cov1': 'new_cov1', 'cov2': 'new_cov2'},
-    #                         {'group': 'location'},
-    #                         {'time': 't'}])
-    # def test_odedata_rename_cols(self, df, new_col_names):
-    #     odedate = self.generate_odedata_instance(df)
-    #     odedate.rename_cols(new_col_names)
-    #     if 'comp1' in new_col_names:
-    #         assert odedate.col_components == ['new_comp1', 'new_comp2']
-    #         assert 'new_comp1' in odedate.df
-    #         assert 'new_comp2' in odedate.df
-    #     if 'cov1' in new_col_names:
-    #         assert odedate.col_covs == ['new_cov1', 'new_cov2', 'intercept']
-    #         assert 'new_cov1' in odedate.df
-    #         assert 'new_cov2' in odedate.df
-    #     if 'group' in new_col_names:
-    #         assert odedate.col_group == 'location'
-    #         assert 'location' in odedate.df
-    #     if 'time' in new_col_names:
-    #         assert odedate.col_t == 't'
-    #         assert 't' in odedate.df
-
-
-    # @pytest.mark.parametrize('group', ['A', 'B', 'C'])
-    # def test_odedata_df_by_group(self, df, group):
-    #     odedata = self.generate_odedata_instance(df)
-    #     df_group = odedata.df_by_group(group)
-    #     assert all(df_group[odedata.col_group] == group)
->>>>>>> updated Odedata class
