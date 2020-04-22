@@ -52,7 +52,7 @@ test_data = ODEData(test_df, data_specs)
 # create the ode system
 test_ode_sys = ODESys(
     lambda t, y, params: params*y - np.array([0.0, params[1]]),
-    ['lam1', 'lam2'], 
+    ['lam1', 'lam2'],
     ['y1', 'y2'],
     solver_dt=1e-2,
 )
@@ -76,14 +76,14 @@ test_init_model = InitModel([
 # create the parameter model
 test_param_model = ParamModel([
     SingleParamModel(
-        'lam1', 
+        'lam1',
         ['intercept'],
         use_re=True,
         fe_bounds=[-np.inf, 0.0],
         re_bounds=[-np.inf, 0.0],
     ),
     SingleParamModel(
-        'lam2', 
+        'lam2',
         ['intercept'],
         use_re=True,
         fe_bounds=[-np.inf, 0.0],
