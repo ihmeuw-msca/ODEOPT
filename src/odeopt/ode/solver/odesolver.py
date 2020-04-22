@@ -72,21 +72,14 @@ class ForwardEuler(ODESolver):
 
 
 class RK4(ODESolver):
-    """
-        4th order Runge-Kutta solver.
+    """4th order Runge-Kutta solver.
     """
 
     def __init__(self, *args):
         super().__init__(*args)
 
     def solve(self, t, init_cond, t_params, params):
-        """
-        Solver the ode
-        :param t:
-        :param init_cond:
-        :param t_params:
-        :param params:
-        :return:
+        """4th order Runge-Kutta solver.
         """
 
         t_solve = np.arange(np.min(t), np.max(t) + self.dt, self.dt / 2)

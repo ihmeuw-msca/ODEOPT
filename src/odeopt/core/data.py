@@ -28,6 +28,8 @@ class ODEData:
             col_group (str): Name of the group column.
             col_t (str): Name of the time column.
             col_components (list{str}): Names of the component columns.
+            components_weights (list{float}):
+                Weights for each component the objective.
             col_covs (list{str} | None, optional): Names of the covariates.
             new_col_names (dict{str, str}): Rename the columns.
         """

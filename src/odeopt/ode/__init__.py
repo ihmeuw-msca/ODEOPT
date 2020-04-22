@@ -5,4 +5,5 @@
 """
 from .solver.odesolver import *
 from .system.odesys import *
-from .system.seird import *
+from .system.nonlinearsys import *
+from .system.linearsys import *
