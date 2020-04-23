@@ -40,12 +40,17 @@ test_df = pd.DataFrame({
     't': np.hstack([times, times, times]),
     'y1': np.hstack([y1_A, y1_B, y1_C]),
     'y2': np.hstack([y2_A, y2_B, y2_C]) + 1.0,
+    'y1_se': np.ones(num_data * 3) * 1e-3,
 })
 
-data_specs = DataSpecs(col_t='t',
-                       col_group='group',
-                       components=[Component(col_name='y1'),
-                                   Component(col_name='y2')])
+data_specs = DataSpecs(
+    col_t='t',
+    col_group='group',
+    components=[
+        Component(col_name='y1', se_col_name='y1_se'),
+        Component(col_name='y2'),
+    ]
+)
 test_data = ODEData(test_df, data_specs)
 
 

@@ -69,6 +69,7 @@ class ODEData:
         self.df = self.df[
             [self.col_group, self.col_t] +
             self.col_components +
+            [col_se for col_se in self.col_components_se if col_se is not None] + 
             self.col_covs
         ]
 
