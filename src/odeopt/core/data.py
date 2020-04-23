@@ -6,7 +6,7 @@
 import numpy as np
 import pandas as pd
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict
 
 from odeopt.core import utils
 
@@ -15,7 +15,6 @@ class Component:
     col_name: str
     weight: float = 1.0
     se_col_name: str = None
-    new_col_name: str = None
 
 
 @dataclass
@@ -24,6 +23,7 @@ class DataSpecs:
    col_group: str
    components: List[Component]
    col_covs: List[str] = None
+   new_col_names: Dict[str, str] = None
 
 
 class ODEData:
@@ -45,18 +45,13 @@ class ODEData:
         self.groups = self.df[self.col_group].unique()
 
         assert len(self.data_specs.components) > 0
-        self.components = self.data_specs.components
         self.col_components = []
         self.components_weights = []
         self.col_components_se = []
-        for component in self.components:
+        for component in self.data_specs.components:
             assert component.col_name in self.df
             if component.weight > 0.0:
-                if component.new_col_name is not None:
-                    self.df.rename(columns={component.col_name: component.new_col_name}, inplace=True)
-                    self.col_components.append(component.new_col_name)
-                else:
-                    self.col_components.append(component.col_name)
+                self.col_components.append(component.col_name)
                 self.components_weights.append(component.weight)
                 self.col_components_se.append(component.se_col_name)
 
@@ -70,6 +65,7 @@ class ODEData:
         assert all([name in self.df for name in self.col_covs])
 
         self.df.sort_values([self.col_group, self.col_t], inplace=True)
+        self.rename_cols(self.data_specs.new_col_names)
         self.df = self.df[
             [self.col_group, self.col_t] +
             self.col_components +

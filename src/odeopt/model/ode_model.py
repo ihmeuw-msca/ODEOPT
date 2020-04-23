@@ -74,11 +74,14 @@ class ODEModel:
         )
 
         val = 0.0
-        for component, weight in zip(self.data.col_components, self.data.components_weights):
-            observation = self.data.df_by_group(group)[component]
-            residual = observation - prediction[
-                self.ode_sys.components_id[component]]
-            val += 0.5*np.sum(residual**2) * weight
+        for comp, w, se in zip(self.data.col_components, self.data.components_weights, self.data.col_components_se):
+            observation = self.data.df_by_group(group)[comp]
+            if se is not None:
+                obs_se = self.data.df_by_group(group)[se]
+                residual = (observation - prediction[self.ode_sys.components_id[comp]]) / obs_se
+            else:
+                residual = observation - prediction[self.ode_sys.components_id[comp]]
+            val += 0.5*np.sum(residual**2) * w
 
         return val
 

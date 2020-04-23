@@ -25,8 +25,14 @@ class TestODEData:
 
     @pytest.fixture
     def data_specs(self):
-        comps = [Component(col_name='y1', new_col_name='comp1'), Component(col_name='y2', new_col_name='comp2')]
-        return DataSpecs(col_t='time', col_group='group', components=comps, col_covs=['cov1', 'cov2'])
+        comps = [Component(col_name='y1'), Component(col_name='y2')]
+        return DataSpecs(
+            col_t='time', 
+            col_group='group', 
+            components=comps, 
+            col_covs=['cov1', 'cov2'],
+            new_col_names={'y1': 'comp1', 'y2': 'comp2'},
+        )
 
     def test_odedata(self, df, data_specs):
         odedata = ODEData(df, data_specs)
