@@ -14,6 +14,7 @@ setup(
         'scipy',
         'pandas',
         'pytest',
+        'xspline'
     ],
     zip_safe=False,
 )

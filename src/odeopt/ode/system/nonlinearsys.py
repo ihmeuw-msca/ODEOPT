@@ -78,14 +78,18 @@ class SimpleSEIRD(ODESys):
 class BetaSEIR(ODESys):
     """SEIR Model that only have beta as parameter.
     """
-    def __init__(self, sigma, gamma, *args):
+    def __init__(self, alpha, sigma, gamma, N, *args):
         """Constructor of BetaSEIR Model.
         """
         # create system
+        assert 0.0 < alpha <= 1.0
         assert sigma >= 0.0
         assert gamma >= 0.0
+        assert N > 0.0
+        self.alpha = alpha
         self.sigma = sigma
         self.gamma = gamma
+        self.N = N
 
         # create parameter names
         params = ['beta']
@@ -95,21 +99,31 @@ class BetaSEIR(ODESys):
 
         super().__init__(self.system, params, components, *args)
 
-    def update_given_params(self, sigma=None, gamma=None):
+    def update_given_params(self, alpha=None, sigma=None, gamma=None, N=None,):
         """Update given parameters.
 
         Args:
+            alpha (float | None, optional):
+                Updated alpha parameter, if `None` no update will happen.
             sigma (float | None, optional):
                 Updated sigma parameter, if `None` no update will happen.
             gamma (float | None, optional):
                 Updated gamma parameter, if `None` no update will happen.
+            N (float | None, optional):
+                Update N parameter, if `None` no update will happen.
         """
+        if alpha is not None:
+            assert 0.0 < alpha <= 1.0
+            self.alpha = alpha
         if sigma is not None:
             assert sigma >= 0.0
             self.sigma = sigma
         if gamma is not None:
             assert gamma >= 0.0
             self.gamma = gamma
+        if N is not None:
+            assert N > 0.0
+            self.N = N
 
     def system(self, t, y, p):
         beta = p[0]
@@ -119,12 +133,92 @@ class BetaSEIR(ODESys):
         i = y[2]
         r = y[3]
 
-        ds = -beta*s*i
-        de = beta*s*i - self.sigma*e
+        ds = -beta*(s/self.N)*i**self.alpha
+        de = beta*(s/self.N)*i**self.alpha - self.sigma*e
         di = self.sigma*e - self.gamma*i
         dr = self.gamma*i
 
         return np.array([ds, de, di, dr])
+
+
+class BetaSEIIR(ODESys):
+    """SEIIR Model that only have beta as parameter.
+    """
+    def __init__(self, alpha, sigma, gamma1, gamma2, N, *args):
+        """Constructor of BetaSEIR Model.
+        """
+        # create system
+        assert 0 < alpha <= 1.0
+        assert sigma >= 0.0
+        assert gamma1 >= 0.0
+        assert gamma2 >= 0.0
+        assert N > 0.0
+        self.alpha = alpha
+        self.sigma = sigma
+        self.gamma1 = gamma1
+        self.gamma2 = gamma2
+        self.N = N
+
+        # create parameter names
+        params = ['beta']
+
+        # create component names
+        components = ['S', 'E', 'I1', 'I2', 'R']
+
+        super().__init__(self.system, params, components, *args)
+
+    def update_given_params(self,
+                            alpha=None,
+                            sigma=None,
+                            gamma1=None,
+                            gamma2=None,
+                            N=None):
+        """Update given parameters.
+
+        Args:
+            alpha (float | None, optional):
+                Updated alpha parameter, if `None` no update will happen.
+            sigma (float | None, optional):
+                Updated sigma parameter, if `None` no update will happen.
+            gamma1 (float | None, optional):
+                Updated gamma1 parameter, if `None` no update will happen.
+            gamma2 (float | None, optional):
+                Updated gamma2 parameter, if `None` no update will happen.
+            N (float | None, optional):
+                Update N parameter, if `None` no update will happen.
+        """
+        if alpha is not None:
+            assert 0.0 < alpha <= 1.0
+            self.alpha = alpha
+        if sigma is not None:
+            assert sigma >= 0.0
+            self.sigma = sigma
+        if gamma1 is not None:
+            assert gamma1 >= 0.0
+            self.gamma1 = gamma1
+        if gamma2 is not None:
+            assert gamma2 >= 0.0
+            self.gamma2 = gamma2
+        if N is not None:
+            assert N > 0.0
+            self.N = N
+
+    def system(self, t, y, p):
+        beta = p[0]
+
+        s = y[0]
+        e = y[1]
+        i1 = y[2]
+        i2 = y[3]
+        r = y[4]
+
+        ds = -beta*(s/self.N)*(i1 + i2)**self.alpha
+        de = beta*(s/self.N)*(i1 + i2)**self.alpha - self.sigma*e
+        di1 = self.sigma*e - self.gamma1*i1
+        di2 = self.gamma1*i1 - self.gamma2*i2
+        dr = self.gamma2*i2
+
+        return np.array([ds, de, di1, di2, dr])
 
 
 class SEIR(ODESys):
