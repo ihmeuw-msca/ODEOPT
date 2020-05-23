@@ -7,7 +7,7 @@ __title__ = "odeopt"
 __summary__ = "Optimization-based ODE Model"
 __uri__ = "https://github.com/ihmeuw-msca/ODEOPT"
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __author__ = "The IHME Math Sciences Team"
 __email__ = "ihme.math.sciences@gmail.com"
