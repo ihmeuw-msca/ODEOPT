@@ -7,6 +7,9 @@ Optimization Based Solver for ODE Parameter Inference Problem
 .. image:: https://badge.fury.io/py/odeopt.svg
     :target: https://badge.fury.io/py/odeopt
 
+.. image:: https://zenodo.org/badge/255755421.svg
+   :target: https://zenodo.org/badge/latestdoi/255755421
+
 Contributing
 ------------
 
