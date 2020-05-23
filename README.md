@@ -1,1 +1,0 @@
-# Optimization Based Solver for ODE Paramter Inference Problem

@@ -1,5 +1,1 @@
-# -*- coding: utf-8 -*-
-"""
-    ODE OPT
-    ~~~~~~~
-"""
+from .__about__ import *
