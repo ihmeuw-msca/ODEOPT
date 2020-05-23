@@ -1,7 +1,7 @@
 Optimization Based Solver for ODE Parameter Inference Problem
 =============================================================
 
-[![Build Status](https://travis-ci.com/ihmeuw-msca/ODEOPT.svg?branch=master)](https://travis-ci.com/ihmeuw-msca/ODEOPT)
+[![Build Status](https://travis-ci.com/ihmeuw-msca/ODEOPT.svg?branch=master)](https://travis-ci.com/ihmeuw-msca/ODEOPT)]
 
 Contributing
 ------------
