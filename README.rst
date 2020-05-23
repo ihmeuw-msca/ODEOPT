@@ -23,7 +23,7 @@ Citation
 
 ::
 
-    @software{peng_zheng_2020_3841439,
+    @software{peng_zheng_2020_3841438,
       author       = {Peng Zheng and
                       Jize Zhang and
                       Aleksei Sholokhov and
@@ -33,6 +33,6 @@ Citation
       year         = 2020,
       publisher    = {Zenodo},
       version      = {v0.1.1},
-      doi          = {10.5281/zenodo.3841439},
-      url          = {https://doi.org/10.5281/zenodo.3841439}
+      doi          = {10.5281/zenodo.3841438},
+      url          = {https://doi.org/10.5281/zenodo.3841438}
     }
