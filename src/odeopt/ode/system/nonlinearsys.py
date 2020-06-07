@@ -3,6 +3,7 @@
     Nonlinear ODE System
     ~~~~~~~~~~~~~~~~~~~~
 """
+from typing import Callable, Union
 import numpy as np
 from .odesys import ODESys
 
@@ -214,6 +215,45 @@ class BetaSEIIR(ODESys):
 
         ds = -beta*(s/self.N)*(i1 + i2)**self.alpha
         de = beta*(s/self.N)*(i1 + i2)**self.alpha - self.sigma*e
+        di1 = self.sigma*e - self.gamma1*i1
+        di2 = self.gamma1*i1 - self.gamma2*i2
+        dr = self.gamma2*i2
+
+        return np.array([ds, de, di1, di2, dr])
+
+
+class BetaSEIIRWithFun(BetaSEIIR):
+    """SEIIR Model with function wrap around (I1 + I2).
+    """
+    def __init__(self, fun: Callable, *args):
+        """Constructor for BetaSEIIRWithFun.
+
+        Args:
+            fun (Callable): Function that modifies I1 + I2.
+        """
+        assert callable(fun), "fun has to be callable."
+        self.fun = fun
+        super().__init__(*args)
+
+    def update_given_params(self, fun: Union[Callable, None] = None, **kwargs):
+        """Update given parameters.
+        """
+        if fun is not None:
+            assert callable(fun)
+            self.fun = fun
+        super().update_given_params(**kwargs)
+
+    def system(self, t, y, p):
+        beta = p[0]
+
+        s = y[0]
+        e = y[1]
+        i1 = y[2]
+        i2 = y[3]
+        r = y[4]
+
+        ds = -beta*(s/self.N)*self.fun(i1 + i2)**self.alpha
+        de = beta*(s/self.N)*self.fun(i1 + i2)**self.alpha - self.sigma*e
         di1 = self.sigma*e - self.gamma1*i1
         di2 = self.gamma1*i1 - self.gamma2*i2
         dr = self.gamma2*i2
